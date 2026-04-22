@@ -15,7 +15,10 @@ A production-ready data pipeline that ingests Steam user data daily, stores hist
 ```
 steam-data-pipeline/
 ├── config.py                     # Configuration management
+├── app.py                        # Flask API entry point
 ├── run_ingestion.py             # Entry point for data ingestion
+├── test_api.py                  # API endpoint tests
+├── view_snapshots.py            # View stored data
 ├── start_mongodb.sh             # Helper script to start MongoDB
 ├── requirements.txt              # Python dependencies
 ├── .env                         # Environment variables (not committed)
@@ -23,10 +26,12 @@ steam-data-pipeline/
     ├── clients/
     │   └── steam_client.py      # Steam API wrapper
     ├── services/
-    │   └── ingestion_service.py # Business logic
+    │   ├── ingestion_service.py # Ingestion business logic
+    │   └── analytics_service.py # Analytics business logic
     ├── db/
     │   └── mongo_client.py      # MongoDB operations
-    └── routes/                  # Flask routes (coming soon)
+    └── routes/
+        └── api_routes.py        # Flask API routes
 ```
 
 ## Setup
@@ -71,31 +76,98 @@ This will:
 2. Store a timestamped snapshot in MongoDB
 3. Display summary statistics
 
-### Example Output
+### Run the Flask API
 
+```bash
+source venv/bin/activate
+python app.py
 ```
-Connected to MongoDB: steam_data
-Starting data ingestion...
-Fetching games from Steam API...
-Retrieved 288 games from Steam
-Saving snapshot to MongoDB...
-Snapshot saved with ID: 69e8a47ac11f574b74ac47d0
 
-=== Ingestion Complete ===
-Snapshot ID: 69e8a47ac11f574b74ac47d0
-Games stored: 288
-Total playtime: 12324.2 hours
-MongoDB connection closed
+The API will be available at `http://localhost:5000`
+
+**Available endpoints:**
+
+- `GET /` - API information and endpoint list
+- `GET /health` - Health check
+- `GET /api/stats` - Overall statistics (total games, playtime, last snapshot time)
+- `GET /api/playtime/total` - Total playtime across all games
+- `GET /api/playtime/history?limit=10` - Playtime history over snapshots
+- `GET /api/playtime/deltas?limit=10` - Recent playtime changes between snapshots
+- `GET /api/games/top?limit=10` - Most played games
+- `GET /api/games/new` - Newly added games (between last 2 snapshots)
+
+### Example API Responses
+
+**GET /api/stats**
+```json
+{
+  "success": true,
+  "data": {
+    "total_games": 288,
+    "total_playtime_hours": 12324.2,
+    "total_playtime_minutes": 739452,
+    "snapshot_timestamp": "2026-04-22T10:44:21.502000"
+  }
+}
 ```
+
+**GET /api/games/top?limit=3**
+```json
+{
+  "success": true,
+  "count": 3,
+  "data": [
+    {
+      "appid": 730,
+      "name": "Counter-Strike 2",
+      "playtime_hours": 3810.13,
+      "playtime_minutes": 228608,
+      "last_played": 1774048307
+    },
+    {
+      "appid": 252950,
+      "name": "Rocket League",
+      "playtime_hours": 1376.32,
+      "playtime_minutes": 82579,
+      "last_played": 1776714271
+    },
+    {
+      "appid": 236850,
+      "name": "Europa Universalis IV",
+      "playtime_hours": 1341.33,
+      "playtime_minutes": 80480,
+      "last_played": 1776700904
+    }
+  ]
+}
+```
+
+### Test API Endpoints
+
+```bash
+source venv/bin/activate
+python test_api.py
+```
+
+This runs automated tests against all API endpoints.
+
+### View Stored Data
+
+```bash
+source venv/bin/activate
+python view_snapshots.py
+```
+
+This displays your stored snapshots and top games.
 
 ## Architecture
 
 ### Separation of Concerns
 
 - **clients/**: External API communication (Steam Web API)
-- **services/**: Business logic and data orchestration
+- **services/**: Business logic (ingestion, analytics)
 - **db/**: Database operations (MongoDB)
-- **routes/**: HTTP endpoints (Flask API - coming later)
+- **routes/**: HTTP endpoints (Flask API)
 
 ### Why This Structure?
 
@@ -104,11 +176,13 @@ MongoDB connection closed
 3. **Scalability**: Easy to add new data sources or storage backends
 4. **Production-ready**: Follows industry best practices for data pipelines
 
-## Coming Next
+## Features
 
-- [ ] Playtime delta calculations (compare snapshots)
-- [ ] New game detection
-- [ ] Flask API endpoints for analytics
+- [x] Steam API integration (GetOwnedGames)
+- [x] MongoDB storage with timestamped snapshots
+- [x] Playtime delta calculations (compare snapshots)
+- [x] New game detection
+- [x] Flask API endpoints for analytics
 - [ ] Dashboard visualization
 - [ ] Automated scheduling with cron
 

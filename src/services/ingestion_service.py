@@ -5,23 +5,21 @@ from src.db.mongo_client import MongoDBClient
 class IngestionService:
     
     def __init__(self, steam_client: SteamClient, db_client: MongoDBClient):
-     
         self.steam_client = steam_client
         self.db_client = db_client
     
     def run(self):
-      
-        print("Starting data ingestion...")
+        print("Starting data ingestion")
         
-        # Fetch data from Steam
-        print("Fetching games from Steam API...")
+        # Fetch data from Steam API
+        print("Fetching games from Steam API")
         api_response = self.steam_client.get_owned_games()
         games = self.steam_client.extract_games(api_response)
         
-        print(f"Retrieved {len(games)} games from Steam")
+        print(f"Retrieved {len(games)} games")
         
         # Store in database
-        print("Saving snapshot to MongoDB...")
+        print("Saving snapshot to MongoDB")
         snapshot_id = self.db_client.save_snapshot(games)
         
         # Generate summary
@@ -34,9 +32,9 @@ class IngestionService:
             "total_playtime_hours": round(total_playtime / 60, 2)
         }
         
-        print("\n=== Ingestion Complete ===")
+        print("Ingestion complete")
         print(f"Snapshot ID: {summary['snapshot_id']}")
-        print(f"Games stored: {summary['game_count']}")
-        print(f"Total playtime: {summary['total_playtime_hours']} hours")
+        print(f"Games: {summary['game_count']}")
+        print(f"Playtime: {summary['total_playtime_hours']} hours")
         
         return summary

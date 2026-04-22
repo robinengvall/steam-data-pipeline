@@ -3,9 +3,29 @@ const API_BASE = '/api';
 const loadingEl = document.getElementById('loading');
 const errorEl = document.getElementById('error');
 const contentEl = document.getElementById('content');
+const steamIdInput = document.getElementById('steam-id-input');
+const fetchButton = document.getElementById('fetch-button');
+
+let currentMode = 'database';
 
 async function initDashboard() {
+    fetchButton.addEventListener('click', fetchProfileData);
+    steamIdInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            fetchProfileData();
+        }
+    });
+    
+    await loadDatabaseData();
+}
+
+async function loadDatabaseData() {
+    currentMode = 'database';
     try {
+        loadingEl.classList.remove('hidden');
+        contentEl.classList.add('hidden');
+        errorEl.classList.add('hidden');
+        
         const [stats, topGames, deltas, newGames, history] = await Promise.all([
             fetchData('/stats'),
             fetchData('/games/top?limit=10'),
@@ -30,6 +50,59 @@ async function initDashboard() {
     }
 }
 
+async function fetchProfileData() {
+    const steamId = steamIdInput.value.trim();
+    
+    if (!steamId) {
+        alert('Please enter a Steam ID');
+        return;
+    }
+    
+    currentMode = 'live';
+    try {
+        fetchButton.disabled = true;
+        fetchButton.textContent = 'Fetching...';
+        loadingEl.classList.remove('hidden');
+        contentEl.classList.add('hidden');
+        errorEl.classList.add('hidden');
+        
+        const response = await fetch(`${API_BASE}/fetch-profile?steam_id=${encodeURIComponent(steamId)}`);
+        const json = await response.json();
+        
+        if (!json.success) {
+            throw new Error(json.error || 'Failed to fetch profile');
+        }
+        
+        const profileData = json.data;
+        
+        loadingEl.classList.add('hidden');
+        contentEl.classList.remove('hidden');
+        
+        renderStats({
+            total_games: profileData.total_games,
+            total_playtime_hours: profileData.total_playtime_hours,
+            total_playtime_minutes: profileData.total_playtime_minutes,
+            snapshot_timestamp: profileData.snapshot_timestamp
+        });
+        
+        const topGames = profileData.games.slice(0, 10);
+        renderTopGames(topGames);
+        
+        renderRecentActivity([]);
+        renderNewGames([]);
+        renderPlaytimeHistory([]);
+        
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        loadingEl.classList.add('hidden');
+        errorEl.classList.remove('hidden');
+        errorEl.querySelector('p').textContent = error.message || 'Failed to fetch profile data.';
+    } finally {
+        fetchButton.disabled = false;
+        fetchButton.textContent = 'Fetch Profile';
+    }
+}
+
 async function fetchData(endpoint) {
     const response = await fetch(API_BASE + endpoint);
     if (!response.ok) {
@@ -44,7 +117,7 @@ function renderStats(stats) {
     document.getElementById('total-playtime').textContent = 
         formatNumber(stats.total_playtime_hours) + ' hrs';
     document.getElementById('total-playtime-hours').textContent = 
-        formatNumber(stats.total_playtime_hours) + ' hours';
+        formatNumber(stats.total_playtime_minutes) + ' minutes';
     
     const date = new Date(stats.snapshot_timestamp);
     document.getElementById('last-updated').textContent = formatDate(date);
@@ -217,12 +290,13 @@ function formatNumber(num) {
 }
 
 function formatDate(date) {
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString('sv-SE', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
+        hour12: false
     });
 }
 

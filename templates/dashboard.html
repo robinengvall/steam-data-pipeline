@@ -12,6 +12,17 @@
         <header>
             <h1>Steam Data Pipeline Dashboard</h1>
             <p class="subtitle">Gaming Statistics and Analytics</p>
+            
+            <!-- Steam ID Input -->
+            <div class="steam-id-container">
+                <input 
+                    type="text" 
+                    id="steam-id-input" 
+                    class="steam-id-input" 
+                    placeholder="Enter Steam ID (e.g., 76561198000000000)"
+                />
+                <button id="fetch-button" class="fetch-button">Fetch Profile</button>
+            </div>
         </header>
 
         <!-- Loading State -->
@@ -22,7 +33,7 @@
 
         <!-- Error State -->
         <div id="error" class="error hidden">
-            <p>Failed to load data. Please ensure the API server is running.</p>
+            <p>Failed to load data. Please check your Steam ID or ensure the API server is running.</p>
         </div>
 
         <!-- Main Content -->

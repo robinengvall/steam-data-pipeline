@@ -68,6 +68,67 @@ header h1 {
     font-size: 1rem;
     color: var(--color-text-secondary);
     font-weight: 400;
+    margin-bottom: var(--spacing-xl);
+}
+
+.steam-id-container {
+    display: flex;
+    gap: var(--spacing-md);
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: var(--spacing-xl);
+}
+
+.steam-id-input {
+    flex: 1;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-size: 0.9375rem;
+    font-family: 'Courier New', monospace;
+    transition: all 0.2s;
+    outline: none;
+}
+
+.steam-id-input::placeholder {
+    color: var(--color-text-tertiary);
+}
+
+.steam-id-input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(26, 159, 255, 0.1);
+}
+
+.fetch-button {
+    padding: var(--spacing-md) var(--spacing-xl);
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%);
+    border: none;
+    border-radius: var(--radius-md);
+    color: white;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+}
+
+.fetch-button:hover {
+    background: linear-gradient(135deg, var(--color-accent-hover) 0%, var(--color-accent) 100%);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.fetch-button:active {
+    transform: translateY(0);
+}
+
+.fetch-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .loading, .error {
@@ -361,6 +422,15 @@ footer {
 
     header h1 {
         font-size: 2rem;
+    }
+    
+    .steam-id-container {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    
+    .fetch-button {
+        width: 100%;
     }
     
     .stats-overview {

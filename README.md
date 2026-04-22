@@ -1,27 +1,34 @@
 # Steam Data Pipeline
 
-A production-ready data pipeline that ingests Steam user data daily, stores historical snapshots, and exposes analytics through an API.
+A production-ready data pipeline that ingests Steam user data daily, stores historical snapshots, and exposes analytics through an API and interactive dashboard.
 
 ## Tech Stack
 
 - **Python 3.x**
-- **Flask** - API framework
+- **Flask** - API framework and web server
 - **MongoDB** - Document database for snapshots
 - **requests** - HTTP client for Steam API
 - **python-dotenv** - Environment configuration
+- **HTML/CSS/JavaScript** - Dashboard frontend
 
 ## Project Structure
 
 ```
 steam-data-pipeline/
 ├── config.py                     # Configuration management
-├── app.py                        # Flask API entry point
+├── app.py                        # Flask app with API and dashboard
 ├── run_ingestion.py             # Entry point for data ingestion
 ├── test_api.py                  # API endpoint tests
+├── test_dashboard.py            # Dashboard tests
 ├── view_snapshots.py            # View stored data
 ├── start_mongodb.sh             # Helper script to start MongoDB
 ├── requirements.txt              # Python dependencies
 ├── .env                         # Environment variables (not committed)
+├── templates/
+│   └── dashboard.html           # Dashboard HTML
+├── static/
+│   ├── css/dashboard.css        # Dashboard styles
+│   └── js/dashboard.js          # Dashboard JavaScript
 └── src/
     ├── clients/
     │   └── steam_client.py      # Steam API wrapper
@@ -76,18 +83,32 @@ This will:
 2. Store a timestamped snapshot in MongoDB
 3. Display summary statistics
 
-### Run the Flask API
+### View the Dashboard
 
 ```bash
 source venv/bin/activate
 python app.py
 ```
 
-The API will be available at `http://localhost:5000`
+Then open your browser to **`http://localhost:5000`**
+
+The dashboard shows:
+- **Overview stats** - Total games, playtime, last update time
+- **Top 10 games** - Your most played games with hours
+- **Recent activity** - Games played since last snapshot
+- **New games** - Games added to your library
+- **Playtime history** - Visual chart showing playtime trends
+
+The dashboard automatically fetches data from the API and updates in real-time.
+
+### Use the REST API
+
+The API is also available at `http://localhost:5000/api`
 
 **Available endpoints:**
 
-- `GET /` - API information and endpoint list
+- `GET /` - Dashboard (web interface)
+- `GET /api` - API documentation
 - `GET /health` - Health check
 - `GET /api/stats` - Overall statistics (total games, playtime, last snapshot time)
 - `GET /api/playtime/total` - Total playtime across all games
@@ -183,7 +204,7 @@ This displays your stored snapshots and top games.
 - [x] Playtime delta calculations (compare snapshots)
 - [x] New game detection
 - [x] Flask API endpoints for analytics
-- [ ] Dashboard visualization
+- [x] Interactive web dashboard
 - [ ] Automated scheduling with cron
 
 ## MongoDB Management

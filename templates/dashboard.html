@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Data Pipeline - Dashboard</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>🎮 Steam Gaming Dashboard</h1>
+            <p class="subtitle">Your gaming statistics and insights</p>
+        </header>
+
+        <!-- Loading State -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading your gaming data...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="error hidden">
+            <p>❌ Failed to load data. Make sure the API is running.</p>
+        </div>
+
+        <!-- Main Content -->
+        <div id="content" class="hidden">
+            <!-- Stats Overview -->
+            <section class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <h3>Total Games</h3>
+                        <p class="stat-value" id="total-games">-</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-content">
+                        <h3>Total Playtime</h3>
+                        <p class="stat-value" id="total-playtime">-</p>
+                        <p class="stat-subtext" id="total-playtime-hours">- hours</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-content">
+                        <h3>Last Updated</h3>
+                        <p class="stat-value-small" id="last-updated">-</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Top Games Section -->
+            <section class="section">
+                <h2>🏆 Most Played Games</h2>
+                <div id="top-games" class="game-list">
+                    <!-- Games will be inserted here -->
+                </div>
+            </section>
+
+            <!-- Recent Activity Section -->
+            <section class="section">
+                <h2>🎯 Recent Activity</h2>
+                <p class="section-subtitle">Games played since last snapshot</p>
+                <div id="recent-activity">
+                    <div id="no-activity" class="empty-state">
+                        No recent activity. Play some games and run ingestion again!
+                    </div>
+                    <div id="activity-list" class="activity-list hidden">
+                        <!-- Activity will be inserted here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- New Games Section -->
+            <section class="section">
+                <h2>🆕 New Games</h2>
+                <p class="section-subtitle">Games added to your library</p>
+                <div id="new-games">
+                    <div id="no-new-games" class="empty-state">
+                        No new games detected. Add games and run ingestion!
+                    </div>
+                    <div id="new-games-list" class="game-list hidden">
+                        <!-- New games will be inserted here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Playtime History Section -->
+            <section class="section">
+                <h2>📈 Playtime History</h2>
+                <div id="history-chart" class="chart-container">
+                    <!-- Chart will be inserted here -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>Steam Data Pipeline | Data refreshes when you run ingestion</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

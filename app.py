@@ -2,7 +2,7 @@
 Flask application for Steam Data Pipeline API.
 Exposes analytics endpoints for game statistics.
 """
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from src.db.mongo_client import MongoDBClient
 from src.services.analytics_service import AnalyticsService
 from src.routes.api_routes import create_routes
@@ -28,9 +28,15 @@ def create_app():
     api_blueprint = create_routes(analytics_service)
     app.register_blueprint(api_blueprint)
     
-    # Root endpoint
+    # Root endpoint - Redirect to dashboard
     @app.route('/')
     def index():
+        """Dashboard homepage."""
+        return render_template('dashboard.html')
+    
+    # API info endpoint
+    @app.route('/api')
+    def api_info():
         """API information endpoint."""
         return jsonify({
             "name": "Steam Data Pipeline API",
@@ -80,19 +86,19 @@ def main():
     
     try:
         print("\n" + "="*50)
-        print("Steam Data Pipeline API")
+        print("Steam Data Pipeline")
         print("="*50)
-        print("\nAPI is starting...")
-        print("Available at: http://localhost:5000")
-        print("\nEndpoints:")
-        print("  GET /              - API info")
-        print("  GET /health        - Health check")
-        print("  GET /api/stats     - Overall statistics")
-        print("  GET /api/playtime/total    - Total playtime")
-        print("  GET /api/playtime/history  - Playtime history")
-        print("  GET /api/playtime/deltas   - Recent playtime changes")
-        print("  GET /api/games/top         - Most played games")
-        print("  GET /api/games/new         - Newly added games")
+        print("\nStarting application...")
+        print("\nDashboard: http://localhost:5000")
+        print("API Docs:  http://localhost:5000/api")
+        print("\nAPI Endpoints:")
+        print("  GET /health                    - Health check")
+        print("  GET /api/stats                 - Overall statistics")
+        print("  GET /api/playtime/total        - Total playtime")
+        print("  GET /api/playtime/history      - Playtime history")
+        print("  GET /api/playtime/deltas       - Recent playtime changes")
+        print("  GET /api/games/top             - Most played games")
+        print("  GET /api/games/new             - Newly added games")
         print("\nPress CTRL+C to stop\n")
         
         app.run(host='0.0.0.0', port=5000, debug=True)

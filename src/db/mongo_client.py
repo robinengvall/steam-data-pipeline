@@ -8,9 +8,6 @@ class MongoDBClient:
     """Client for interacting with MongoDB."""
     
     def __init__(self, uri: Optional[str] = None, db_name: Optional[str] = None):
-        """
-        Initialize MongoDB client.
-        """
         self.uri = uri or Config.MONGO_URI
         self.db_name = db_name or Config.MONGO_DB_NAME
         self.client = None
@@ -20,7 +17,6 @@ class MongoDBClient:
         self.client = MongoClient(self.uri)
         self.db = self.client[self.db_name]
         
-        # Test the connection
         self.client.admin.command('ping')
         print(f"Connected to MongoDB: {self.db_name}")
     

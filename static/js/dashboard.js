@@ -1,15 +1,11 @@
-// Steam Dashboard JavaScript
 const API_BASE = '/api';
 
-// DOM Elements
 const loadingEl = document.getElementById('loading');
 const errorEl = document.getElementById('error');
 const contentEl = document.getElementById('content');
 
-// Initialize dashboard
 async function initDashboard() {
     try {
-        // Fetch all data in parallel
         const [stats, topGames, deltas, newGames, history] = await Promise.all([
             fetchData('/stats'),
             fetchData('/games/top?limit=10'),
@@ -18,11 +14,9 @@ async function initDashboard() {
             fetchData('/playtime/history?limit=10')
         ]);
 
-        // Hide loading, show content
         loadingEl.classList.add('hidden');
         contentEl.classList.remove('hidden');
 
-        // Render all sections
         renderStats(stats);
         renderTopGames(topGames);
         renderRecentActivity(deltas);
@@ -36,7 +30,6 @@ async function initDashboard() {
     }
 }
 
-// Fetch data from API
 async function fetchData(endpoint) {
     const response = await fetch(API_BASE + endpoint);
     if (!response.ok) {
@@ -46,7 +39,6 @@ async function fetchData(endpoint) {
     return json.data;
 }
 
-// Render overall stats
 function renderStats(stats) {
     document.getElementById('total-games').textContent = stats.total_games;
     document.getElementById('total-playtime').textContent = 
@@ -58,7 +50,6 @@ function renderStats(stats) {
     document.getElementById('last-updated').textContent = formatDate(date);
 }
 
-// Render top games
 function renderTopGames(games) {
     const container = document.getElementById('top-games');
     container.innerHTML = '';
@@ -66,23 +57,44 @@ function renderTopGames(games) {
     games.forEach((game, index) => {
         const gameEl = document.createElement('div');
         gameEl.className = 'game-item';
-        gameEl.innerHTML = `
-            <div class="game-info">
-                <span class="game-rank">#${index + 1}</span>
-                <span class="game-name">${escapeHtml(game.name)}</span>
-            </div>
-            <div class="game-stats">
-                <div>
-                    <div class="game-playtime">${formatNumber(game.playtime_hours)} hrs</div>
-                    <div class="game-playtime-label">${formatNumber(game.playtime_minutes)} minutes</div>
-                </div>
-            </div>
-        `;
+        
+        const gameInfo = document.createElement('div');
+        gameInfo.className = 'game-info';
+        
+        const gameRank = document.createElement('span');
+        gameRank.className = 'game-rank';
+        gameRank.textContent = `#${index + 1}`;
+        
+        const gameName = document.createElement('span');
+        gameName.className = 'game-name';
+        gameName.textContent = game.name;
+        
+        gameInfo.appendChild(gameRank);
+        gameInfo.appendChild(gameName);
+        
+        const gameStats = document.createElement('div');
+        gameStats.className = 'game-stats';
+        
+        const statsContainer = document.createElement('div');
+        
+        const playtime = document.createElement('div');
+        playtime.className = 'game-playtime';
+        playtime.textContent = `${formatNumber(game.playtime_hours)} hrs`;
+        
+        const playtimeLabel = document.createElement('div');
+        playtimeLabel.className = 'game-playtime-label';
+        playtimeLabel.textContent = `${formatNumber(game.playtime_minutes)} minutes`;
+        
+        statsContainer.appendChild(playtime);
+        statsContainer.appendChild(playtimeLabel);
+        gameStats.appendChild(statsContainer);
+        
+        gameEl.appendChild(gameInfo);
+        gameEl.appendChild(gameStats);
         container.appendChild(gameEl);
     });
 }
 
-// Render recent activity (playtime deltas)
 function renderRecentActivity(deltas) {
     const noActivityEl = document.getElementById('no-activity');
     const activityListEl = document.getElementById('activity-list');
@@ -100,15 +112,21 @@ function renderRecentActivity(deltas) {
     deltas.forEach(delta => {
         const activityEl = document.createElement('div');
         activityEl.className = 'activity-item';
-        activityEl.innerHTML = `
-            <span class="activity-name">${escapeHtml(delta.name)}</span>
-            <span class="activity-delta">+${formatNumber(delta.delta_hours)} hrs</span>
-        `;
+        
+        const activityName = document.createElement('span');
+        activityName.className = 'activity-name';
+        activityName.textContent = delta.name;
+        
+        const activityDelta = document.createElement('span');
+        activityDelta.className = 'activity-delta';
+        activityDelta.textContent = `+${formatNumber(delta.delta_hours)} hrs`;
+        
+        activityEl.appendChild(activityName);
+        activityEl.appendChild(activityDelta);
         activityListEl.appendChild(activityEl);
     });
 }
 
-// Render new games
 function renderNewGames(games) {
     const noGamesEl = document.getElementById('no-new-games');
     const gamesListEl = document.getElementById('new-games-list');
@@ -126,31 +144,46 @@ function renderNewGames(games) {
     games.forEach(game => {
         const gameEl = document.createElement('div');
         gameEl.className = 'game-item';
-        gameEl.innerHTML = `
-            <div class="game-info">
-                <span class="game-name">${escapeHtml(game.name)}</span>
-            </div>
-            <div class="game-stats">
-                <div>
-                    <div class="game-playtime">${formatNumber(game.playtime_hours)} hrs</div>
-                </div>
-            </div>
-        `;
+        
+        const gameInfo = document.createElement('div');
+        gameInfo.className = 'game-info';
+        
+        const gameName = document.createElement('span');
+        gameName.className = 'game-name';
+        gameName.textContent = game.name;
+        
+        gameInfo.appendChild(gameName);
+        
+        const gameStats = document.createElement('div');
+        gameStats.className = 'game-stats';
+        
+        const statsContainer = document.createElement('div');
+        
+        const playtime = document.createElement('div');
+        playtime.className = 'game-playtime';
+        playtime.textContent = `${formatNumber(game.playtime_hours)} hrs`;
+        
+        statsContainer.appendChild(playtime);
+        gameStats.appendChild(statsContainer);
+        
+        gameEl.appendChild(gameInfo);
+        gameEl.appendChild(gameStats);
         gamesListEl.appendChild(gameEl);
     });
 }
 
-// Render playtime history chart
 function renderPlaytimeHistory(history) {
     const container = document.getElementById('history-chart');
     container.innerHTML = '';
 
     if (!history || history.length === 0) {
-        container.innerHTML = '<div class="empty-state">No history available yet. Run ingestion multiple times to see trends!</div>';
+        const emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+        emptyState.textContent = 'No history available. Multiple ingestion runs are required to display trends.';
+        container.appendChild(emptyState);
         return;
     }
 
-    // Find max value for scaling
     const maxHours = Math.max(...history.map(h => h.total_playtime_hours));
 
     history.forEach(snapshot => {
@@ -159,24 +192,30 @@ function renderPlaytimeHistory(history) {
 
         const historyEl = document.createElement('div');
         historyEl.className = 'history-item';
-        historyEl.innerHTML = `
-            <div class="history-date">${formatDate(date)}</div>
-            <div class="history-bar-container">
-                <div class="history-bar" style="width: ${percentage}%">
-                    ${formatNumber(snapshot.total_playtime_hours)} hrs
-                </div>
-            </div>
-        `;
+        
+        const historyDate = document.createElement('div');
+        historyDate.className = 'history-date';
+        historyDate.textContent = formatDate(date);
+        
+        const barContainer = document.createElement('div');
+        barContainer.className = 'history-bar-container';
+        
+        const bar = document.createElement('div');
+        bar.className = 'history-bar';
+        bar.style.width = `${percentage}%`;
+        bar.textContent = `${formatNumber(snapshot.total_playtime_hours)} hrs`;
+        
+        barContainer.appendChild(bar);
+        historyEl.appendChild(historyDate);
+        historyEl.appendChild(barContainer);
         container.appendChild(historyEl);
     });
 }
 
-// Utility: Format number with commas
 function formatNumber(num) {
     return num.toLocaleString('en-US', { maximumFractionDigits: 1 });
 }
 
-// Utility: Format date
 function formatDate(date) {
     return date.toLocaleDateString('en-US', {
         year: 'numeric',
@@ -187,12 +226,4 @@ function formatDate(date) {
     });
 }
 
-// Utility: Escape HTML to prevent XSS
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-// Start the dashboard when page loads
 document.addEventListener('DOMContentLoaded', initDashboard);

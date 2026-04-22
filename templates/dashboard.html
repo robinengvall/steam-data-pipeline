@@ -10,19 +10,19 @@
     <div class="container">
         <!-- Header -->
         <header>
-            <h1>🎮 Steam Gaming Dashboard</h1>
-            <p class="subtitle">Your gaming statistics and insights</p>
+            <h1>Steam Data Pipeline Dashboard</h1>
+            <p class="subtitle">Gaming Statistics and Analytics</p>
         </header>
 
         <!-- Loading State -->
         <div id="loading" class="loading">
             <div class="spinner"></div>
-            <p>Loading your gaming data...</p>
+            <p>Loading data...</p>
         </div>
 
         <!-- Error State -->
         <div id="error" class="error hidden">
-            <p>❌ Failed to load data. Make sure the API is running.</p>
+            <p>Failed to load data. Please ensure the API server is running.</p>
         </div>
 
         <!-- Main Content -->
@@ -30,14 +30,12 @@
             <!-- Stats Overview -->
             <section class="stats-overview">
                 <div class="stat-card">
-                    <div class="stat-icon">📊</div>
                     <div class="stat-content">
                         <h3>Total Games</h3>
                         <p class="stat-value" id="total-games">-</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">⏱️</div>
                     <div class="stat-content">
                         <h3>Total Playtime</h3>
                         <p class="stat-value" id="total-playtime">-</p>
@@ -45,7 +43,6 @@
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">📅</div>
                     <div class="stat-content">
                         <h3>Last Updated</h3>
                         <p class="stat-value-small" id="last-updated">-</p>
@@ -55,7 +52,7 @@
 
             <!-- Top Games Section -->
             <section class="section">
-                <h2>🏆 Most Played Games</h2>
+                <h2>Most Played Games</h2>
                 <div id="top-games" class="game-list">
                     <!-- Games will be inserted here -->
                 </div>
@@ -63,11 +60,11 @@
 
             <!-- Recent Activity Section -->
             <section class="section">
-                <h2>🎯 Recent Activity</h2>
+                <h2>Recent Activity</h2>
                 <p class="section-subtitle">Games played since last snapshot</p>
                 <div id="recent-activity">
                     <div id="no-activity" class="empty-state">
-                        No recent activity. Play some games and run ingestion again!
+                        No recent activity detected. Run ingestion after playing to see changes.
                     </div>
                     <div id="activity-list" class="activity-list hidden">
                         <!-- Activity will be inserted here -->
@@ -77,11 +74,11 @@
 
             <!-- New Games Section -->
             <section class="section">
-                <h2>🆕 New Games</h2>
-                <p class="section-subtitle">Games added to your library</p>
+                <h2>New Games</h2>
+                <p class="section-subtitle">Games added to library</p>
                 <div id="new-games">
                     <div id="no-new-games" class="empty-state">
-                        No new games detected. Add games and run ingestion!
+                        No new games detected between snapshots.
                     </div>
                     <div id="new-games-list" class="game-list hidden">
                         <!-- New games will be inserted here -->
@@ -91,7 +88,7 @@
 
             <!-- Playtime History Section -->
             <section class="section">
-                <h2>📈 Playtime History</h2>
+                <h2>Playtime History</h2>
                 <div id="history-chart" class="chart-container">
                     <!-- Chart will be inserted here -->
                 </div>
@@ -100,7 +97,7 @@
 
         <!-- Footer -->
         <footer>
-            <p>Steam Data Pipeline | Data refreshes when you run ingestion</p>
+            <p>Steam Data Pipeline | Updated on ingestion runs</p>
         </footer>
     </div>
 

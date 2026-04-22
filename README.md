@@ -314,11 +314,7 @@ The codebase follows professional Python conventions:
 - [x] New game detection
 - [x] Flask REST API
 - [x] Interactive dashboard with Steam theme
-- [ ] Automated scheduling with cron
-- [ ] Multiple user support
-- [ ] Game achievement tracking
 - [ ] Export data to CSV/JSON
-- [ ] Docker containerization
 
 ## License
 

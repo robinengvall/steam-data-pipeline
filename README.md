@@ -1,123 +1,175 @@
 # Steam Data Pipeline
 
-A production-ready data pipeline that ingests Steam user data daily, stores historical snapshots, and exposes analytics through an API and interactive dashboard.
+A professional data pipeline that ingests Steam user data, stores historical snapshots in MongoDB, and provides analytics through a REST API and interactive dashboard.
+
+![Dashboard Overview](docs/images/dashboard_overview.png)
+
+## Features
+
+- **Automated Data Ingestion** - Fetch gaming data from Steam Web API
+- **Historical Snapshots** - Track gaming activity over time with MongoDB
+- **REST API** - Clean API endpoints for all analytics
+- **Interactive Dashboard** - Steam-themed dark mode UI with real-time data visualization
+- **Analytics Engine** - Playtime tracking, delta calculations, and trend analysis
+
+## Dashboard Showcase
+
+### Most Played Games
+Track your top games with detailed playtime statistics.
+
+![Most Played Games](docs/images/most_played_games.png)
+
+### Recent Activity
+See which games you've been playing since the last snapshot.
+
+![Recent Activity](docs/images/recent_activity.png)
+
+### New Games
+Track new additions to your Steam library.
+
+![New Games](docs/images/new_games.png)
+
+### Playtime History
+Visualize your gaming trends over time with historical charts.
+
+![Playtime History](docs/images/playtime_history.png)
 
 ## Tech Stack
 
-- **Python 3.x**
-- **Flask** - API framework and web server
-- **MongoDB** - Document database for snapshots
-- **requests** - HTTP client for Steam API
-- **python-dotenv** - Environment configuration
-- **HTML/CSS/JavaScript** - Dashboard frontend
+- **Python 3.x** - Backend language
+- **Flask** - Web framework and REST API
+- **MongoDB** - NoSQL database for time-series snapshots
+- **Steam Web API** - Data source
+- **JavaScript (Vanilla)** - Frontend with DOM manipulation
+- **CSS3** - Steam-inspired dark theme design
 
 ## Project Structure
 
 ```
 steam-data-pipeline/
+├── app.py                        # Flask application
 ├── config.py                     # Configuration management
-├── app.py                        # Flask app with API and dashboard
-├── run_ingestion.py             # Entry point for data ingestion
-├── test_api.py                  # API endpoint tests
-├── test_dashboard.py            # Dashboard tests
-├── view_snapshots.py            # View stored data
-├── start_mongodb.sh             # Helper script to start MongoDB
+├── run_ingestion.py              # Data ingestion entry point
 ├── requirements.txt              # Python dependencies
-├── .env                         # Environment variables (not committed)
 ├── templates/
-│   └── dashboard.html           # Dashboard HTML
+│   └── dashboard.html            # Dashboard UI
 ├── static/
-│   ├── css/dashboard.css        # Dashboard styles
-│   └── js/dashboard.js          # Dashboard JavaScript
-└── src/
-    ├── clients/
-    │   └── steam_client.py      # Steam API wrapper
-    ├── services/
-    │   ├── ingestion_service.py # Ingestion business logic
-    │   └── analytics_service.py # Analytics business logic
-    ├── db/
-    │   └── mongo_client.py      # MongoDB operations
-    └── routes/
-        └── api_routes.py        # Flask API routes
+│   ├── css/dashboard.css         # Steam-themed styling
+│   └── js/dashboard.js           # Frontend logic
+├── src/
+│   ├── clients/
+│   │   └── steam_client.py       # Steam API client
+│   ├── services/
+│   │   ├── ingestion_service.py  # Data ingestion logic
+│   │   └── analytics_service.py  # Analytics processing
+│   ├── db/
+│   │   └── mongo_client.py       # MongoDB operations
+│   └── routes/
+│       └── api_routes.py         # REST API endpoints
+└── docs/
+    └── images/                   # Screenshots
 ```
 
-## Setup
+## Quick Start
 
-### 1. Install Dependencies
+### Prerequisites
 
+- Python 3.x
+- MongoDB
+- Steam API Key ([Get one here](https://steamcommunity.com/dev/apikey))
+
+### Installation
+
+1. **Clone the repository**
 ```bash
-# Activate virtual environment
-source venv/bin/activate
+git clone <your-repo-url>
+cd steam-data-pipeline
+```
 
-# Install Python packages
+2. **Set up virtual environment**
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. **Install dependencies**
+```bash
 pip install -r requirements.txt
 ```
 
-### 2. Configure Environment
+4. **Configure environment variables**
 
-Create a `.env` file with your Steam credentials:
-
-```
+Create a `.env` file:
+```env
 STEAM_API_KEY=your_steam_api_key_here
 STEAM_ID=your_steam_id_here
 ```
 
-### 3. Start MongoDB
-
+5. **Start MongoDB**
 ```bash
-# Start MongoDB (will create temp data directory)
 ./start_mongodb.sh
 ```
 
-## Usage
+### Usage
 
-### Run Data Ingestion
+#### 1. Run Data Ingestion
+
+Fetch your Steam data and store a snapshot:
 
 ```bash
-source venv/bin/activate
 python run_ingestion.py
 ```
 
-This will:
-1. Fetch your Steam games from the API
-2. Store a timestamped snapshot in MongoDB
-3. Display summary statistics
+Output:
+```
+Steam Data Pipeline - Ingestion Service
+Fetching games from Steam API...
+Found 288 games
+Storing snapshot in MongoDB...
+Snapshot stored successfully
 
-### View the Dashboard
+Summary:
+  Total Games: 288
+  Total Playtime: 12,326.43 hours
+```
+
+#### 2. Start the Dashboard
+
+Launch the web application:
 
 ```bash
-source venv/bin/activate
 python app.py
 ```
 
-Then open your browser to **`http://localhost:5000`**
+Then open your browser to:
+- **Dashboard**: http://localhost:5000
+- **API Docs**: http://localhost:5000/api
 
-The dashboard shows:
-- **Overview stats** - Total games, playtime, last update time
-- **Top 10 games** - Your most played games with hours
-- **Recent activity** - Games played since last snapshot
-- **New games** - Games added to your library
-- **Playtime history** - Visual chart showing playtime trends
+#### 3. Test the API
 
-The dashboard automatically fetches data from the API and updates in real-time.
+Run automated tests:
 
-### Use the REST API
+```bash
+python test_dashboard.py
+```
 
-The API is also available at `http://localhost:5000/api`
+## REST API
 
-**Available endpoints:**
+### Available Endpoints
 
-- `GET /` - Dashboard (web interface)
-- `GET /api` - API documentation
-- `GET /health` - Health check
-- `GET /api/stats` - Overall statistics (total games, playtime, last snapshot time)
-- `GET /api/playtime/total` - Total playtime across all games
-- `GET /api/playtime/history?limit=10` - Playtime history over snapshots
-- `GET /api/playtime/deltas?limit=10` - Recent playtime changes between snapshots
-- `GET /api/games/top?limit=10` - Most played games
-- `GET /api/games/new` - Newly added games (between last 2 snapshots)
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/` | GET | Dashboard UI |
+| `/api` | GET | API documentation |
+| `/health` | GET | Health check |
+| `/api/stats` | GET | Overall statistics |
+| `/api/playtime/total` | GET | Total playtime |
+| `/api/playtime/history` | GET | Historical playtime data |
+| `/api/playtime/deltas` | GET | Recent playtime changes |
+| `/api/games/top` | GET | Most played games |
+| `/api/games/new` | GET | Newly added games |
 
-### Example API Responses
+### Example API Response
 
 **GET /api/stats**
 ```json
@@ -125,9 +177,9 @@ The API is also available at `http://localhost:5000/api`
   "success": true,
   "data": {
     "total_games": 288,
-    "total_playtime_hours": 12324.2,
-    "total_playtime_minutes": 739452,
-    "snapshot_timestamp": "2026-04-22T10:44:21.502000"
+    "total_playtime_hours": 12326.43,
+    "total_playtime_minutes": 739586,
+    "snapshot_timestamp": "2026-04-22T13:15:26.822000"
   }
 }
 ```
@@ -151,63 +203,44 @@ The API is also available at `http://localhost:5000/api`
       "playtime_hours": 1376.32,
       "playtime_minutes": 82579,
       "last_played": 1776714271
-    },
-    {
-      "appid": 236850,
-      "name": "Europa Universalis IV",
-      "playtime_hours": 1341.33,
-      "playtime_minutes": 80480,
-      "last_played": 1776700904
     }
   ]
 }
 ```
 
-### Test API Endpoints
-
-```bash
-source venv/bin/activate
-python test_api.py
-```
-
-This runs automated tests against all API endpoints.
-
-### View Stored Data
-
-```bash
-source venv/bin/activate
-python view_snapshots.py
-```
-
-This displays your stored snapshots and top games.
-
 ## Architecture
 
-### Separation of Concerns
+### Design Principles
 
-- **clients/**: External API communication (Steam Web API)
-- **services/**: Business logic (ingestion, analytics)
-- **db/**: Database operations (MongoDB)
-- **routes/**: HTTP endpoints (Flask API)
+- **Separation of Concerns**: Clear boundaries between API, business logic, and data access
+- **Testability**: Each layer can be tested independently
+- **Scalability**: Easy to add new data sources or storage backends
+- **Production-Ready**: Follows industry best practices
+
+### Data Flow
+
+```
+Steam API → Steam Client → Ingestion Service → MongoDB
+                                                   ↓
+User → Dashboard → Flask API → Analytics Service → MongoDB
+```
 
 ### Why This Structure?
 
-1. **Testability**: Each layer can be tested independently
-2. **Maintainability**: Changes to Steam API don't affect database code
-3. **Scalability**: Easy to add new data sources or storage backends
-4. **Production-ready**: Follows industry best practices for data pipelines
+1. **clients/** - External API communication (Steam Web API)
+2. **services/** - Business logic (ingestion, analytics)
+3. **db/** - Database operations (MongoDB)
+4. **routes/** - HTTP endpoints (Flask API)
 
-## Features
-
-- [x] Steam API integration (GetOwnedGames)
-- [x] MongoDB storage with timestamped snapshots
-- [x] Playtime delta calculations (compare snapshots)
-- [x] New game detection
-- [x] Flask API endpoints for analytics
-- [x] Interactive web dashboard
-- [ ] Automated scheduling with cron
+This architecture ensures:
+- Changes to Steam API don't affect database code
+- Easy to swap MongoDB for another database
+- Business logic is reusable across different interfaces
+- Each component has a single responsibility
 
 ## MongoDB Management
+
+### Useful Commands
 
 ```bash
 # Check if MongoDB is running
@@ -226,18 +259,77 @@ mongosh
 > db.game_snapshots.find().limit(1).pretty()
 ```
 
+### View Stored Data
+
+Use the included utility script:
+
+```bash
+python view_snapshots.py
+```
+
+## Development
+
+### Running Tests
+
+```bash
+# Test dashboard and API endpoints
+python test_dashboard.py
+```
+
+### Code Style
+
+The codebase follows professional Python conventions:
+- Clean, readable code without unnecessary comments
+- Separation of HTML, CSS, and JavaScript
+- No inline styles or scripts
+- Proper DOM manipulation instead of innerHTML
+- Comprehensive docstrings for complex functions
+
 ## Troubleshooting
 
 **MongoDB won't start:**
 - Check if another instance is running: `pgrep mongod`
-- Check logs: `cat /tmp/mongodb.log`
 - Kill existing process: `pkill mongod` and retry
+- Check logs: `cat /tmp/mongodb.log`
 
 **Connection refused:**
 - Ensure MongoDB is running: `./start_mongodb.sh`
-- Check it's listening: `ss -tlnp | grep 27017`
+- Verify it's listening: `ss -tlnp | grep 27017`
 
 **Steam API errors:**
 - Verify your API key in `.env`
 - Check your Steam ID is correct
-- Ensure your profile is public
+- Ensure your Steam profile is public
+
+**Dashboard shows no data:**
+- Run ingestion at least once: `python run_ingestion.py`
+- Check MongoDB has data: `python view_snapshots.py`
+- Verify API is responding: `curl http://localhost:5000/health`
+
+## Roadmap
+
+- [x] Steam API integration
+- [x] MongoDB storage with snapshots
+- [x] Playtime delta calculations
+- [x] New game detection
+- [x] Flask REST API
+- [x] Interactive dashboard with Steam theme
+- [ ] Automated scheduling with cron
+- [ ] Multiple user support
+- [ ] Game achievement tracking
+- [ ] Export data to CSV/JSON
+- [ ] Docker containerization
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## Acknowledgments
+
+- Steam Web API for providing gaming data
+- Flask community for excellent documentation
+- MongoDB for reliable time-series storage
+
+---
+
+**Note**: This is a personal project for tracking gaming statistics. Make sure to comply with Steam's API terms of service.
